@@ -47,9 +47,29 @@ connect( oneDrive, &QtOneDrive::successSignIn, [this] (const QString& filePath, 
 **3. Download File**
 
 **4. Delete File or Folder**
+```c++
+...
+oneDrive->deleteItem( id );
+...
+```
 
 **5. Get User Info**
+```c++
+...
+oneDrive->getUserInfo();
+...
+```
 
 **6. Create Folder**
 
+```c++
+...
+oneDrive->createFolder("My Folder Name", PARENT_FOLDER_ID);
+...
+```
+
 **7. Sing Out**
+```c++
+...
+oneDrive->signOut();
+...

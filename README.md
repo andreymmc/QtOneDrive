@@ -43,3 +43,13 @@ connect( oneDrive, &QtOneDrive::successSignIn, [this] (const QString& filePath, 
     qDebug() << QString("Upload Success. File Path: %1   File Id: %2").arg(filePath, fileId);
 });
 ```
+
+**3. Download File**
+
+**4. Delete File or Folder**
+
+**5. Get User Info**
+
+**6. Create Folder**
+
+**7. Sing Out**

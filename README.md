@@ -8,7 +8,7 @@ Examples:
 
 1. SignIn
 ```c++
-QtOneDrive oneDrive = new QtOneDrive(YOUR_CLIENT_ID, YOUR_SECRET, ANY_ID, parent );
+QtOneDrive* oneDrive = new QtOneDrive(YOUR_CLIENT_ID, YOUR_SECRET, ANY_ID, parent );
 
 connect( oneDrive, &QtOneDrive::error, [this] (const QString& error)
 {

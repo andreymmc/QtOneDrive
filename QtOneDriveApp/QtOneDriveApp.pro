@@ -18,13 +18,17 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
    ../QtOneDriveLib/qtonedrive.cpp \
-    testonedrive.cpp \
-    ../QtOneDriveLib/authorizationform.cpp
+    ../QtOneDriveLib/qtonedriveauthorizationdialog.cpp \
+    ../QtOneDriveLib/qtonedrivewebview.cpp \
+    testdialog.cpp
 
 HEADERS += \
     ../QtOneDriveLib/qtonedrive.h \
-    testonedrive.h \
-    ../QtOneDriveLib/authorizationform.h
+    ../QtOneDriveLib/qtonedriveauthorizationdialog.h \
+    ../QtOneDriveLib/qtonedrivewebview.h \
+    testdialog.h
 
 FORMS += \
-    ../QtOneDriveLib/authorizationform.ui
+    testdialog.ui
+
+OTHER_FILES +=

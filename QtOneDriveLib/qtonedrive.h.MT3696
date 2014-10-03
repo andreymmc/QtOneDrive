@@ -3,33 +3,30 @@
 
 #include "qtonedrivelib_global.h"
 #include <QObject>
-#include <QTcpServer>
-#include <QNetworkAccessManager>
 #include <QUrl>
 #include <QUrlQuery>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QDebug>
 #include <QDateTime>
-#include <QSettings>
+#include <QJsonObject>
 
 namespace {
     #define ONEDRIVE_DEF_LOCAL_PORT  54432
 }
 
-class AuthorizationForm;
+class QtOneDriveAuthorizationDialog;
+class QSettings;
+class QNetworkAccessManager;
 
 class QTONEDRIVELIBSHARED_EXPORT QtOneDrive : public QObject
 {
     Q_OBJECT
 
-public:
     enum OneDriveState
     {
         Empty,
+
         SingIn,
         SingOut,
-
         GetUserInfo,
 
         UploadFile,
@@ -43,13 +40,19 @@ public:
 public:
     explicit QtOneDrive(const QString& clientID,
                         const QString& secret,
-                        const QString& redirectUri,
-                        const QString& userID = "",  //
+                        const QString& userID,
                         QObject* parent = 0 );
+
+    explicit QtOneDrive(const QString& clientID,
+                        const QString& secret,
+                        const QString& redirectUri,
+                        const QString& userID,
+                        QObject* parent = 0 );
+
     ~QtOneDrive();
 
-public:
 
+public:
     void signIn();
     bool isSingIn() const { return isSignIn_; }
 
@@ -60,43 +63,32 @@ public:
     void downloadFile(const QString &path);
     void refreshToken();
     void getToken();
-
     void closeAuthorizationForm();
 
-private slots:
-    void slot_getTokenFinished();
-    void slot_refreshTokenFinished();
-    void slot_tokenError(QNetworkReply::NetworkError);
+    QString debugInfo() const;
+    bool isBusy() const { return state_ != Empty; }
 
-    void slot_singLoadPageSuccess(const QUrl &url);
-    void slot_singLoadPageError(const QUrl &url);
 signals:
-
-    void singInError( const QString &error );
-    void singOutError( const QString &error );
-
-    void authError( const QString &error );
-    void uploadFileError( const QString &error );
-    void downloadFileError( const QString &error );
-    void getUserInfoError( const QString &error );
-
-    void singInSuccess();
-    void singOutSuccess();
-
-    void refreshTokenSuccess();
-    void uploadFileSuccess();
-    void downloadFileSuccess();
-    void getUserInfoSuccess();
-
+    void errorSignIn( const QString &error );
+    void errorSignOut( const QString &error );
+    void errorUploadFile( const QString &error );
+    void errorDownloadFile( const QString &error );
+    void errorGetUserInfo( const QString &error );
     void error( const QString &error );
-    void progress(const int &progressPercent );
-    void finish();
+
+    void successSignIn();
+    void successSingOut();
+    void successUploadFile();
+    void successDownloadFile();
+    void successGetUserInfo(const QJsonObject &json);
+
 
 private:
 
     QUrl singInUrl() const;
     QUrl singOutUrl() const;
     QUrl getTokenUrl() const;
+    QUrl getUserInfoUrl() const;
 
     QUrlQuery getTokenPost() const;
     QUrlQuery refreshTokenPost() const;
@@ -107,7 +99,12 @@ private:
 private:
     bool startLocalServer();
     void emitError( const QString &desc );
-    bool isBusy() const { return state_ != Empty; }
+
+    bool isNeedRefreshToken() const;
+
+    void requestGetUsetInfo();
+    void requestRefreshToken();
+
 
 private:
     QString clientID_;
@@ -130,10 +127,7 @@ private:
 
     QNetworkAccessManager* networkManager_ = nullptr;
 
-    QNetworkReply* getTokenReply_= nullptr;
-    QNetworkReply* refreshTokenReply_= nullptr;
-
-    AuthorizationForm* form_ = nullptr;
+    QtOneDriveAuthorizationDialog* dialog_ = nullptr;
 };
 
 #endif // QTONEDRIVE_H

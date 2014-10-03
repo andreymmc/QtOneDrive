@@ -24,3 +24,22 @@ connect( oneDrive, &QtOneDrive::successSignIn, [this] ()
 oneDrive->singIn();
 
 ```
+**2. Upload File**
+```C++
+QtOneDrive* oneDrive = new QtOneDrive(YOUR_CLIENT_ID, YOUR_SECRET, ANY_ID, parent );
+
+oneDrive->uploadFile("c:\\MyFolder\\MyFile.txt", FOLDER_ID);
+
+connect( oneDrive, &QtOneDrive::error, [this] (const QString& error)
+{
+    qDebug() << "ERROR: " << error;
+});
+connect( oneDrive, &QtOneDrive::progressUploadFile, [this] (const QString& filePath, int percent)
+{
+    qDebug() << QString("Progress %1 %%").arg(percent()l
+});
+connect( oneDrive, &QtOneDrive::successSignIn, [this] (const QString& filePath, coust QString &fileID)
+{
+    qDebug() << QString("Upload Success. File Path: %1   File Id: %2").arg(filePath, fileId);
+});
+```

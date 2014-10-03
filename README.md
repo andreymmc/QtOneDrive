@@ -4,11 +4,10 @@ QtOneDrive
 Qt5 API for OneDrive
 
 
-
 Examples:
 
 1. SignIn
-
+<code>
 QtOneDrive oneDrive = new QtOneDrive(YOUR_CLIENT_ID, YOUR_SECRET, ANY_ID, parent );
 
 connect( oneDrive, &QtOneDrive::error, [this] (const QString& error)
@@ -23,3 +22,4 @@ connect( oneDrive, &QtOneDrive::successSignIn, [this] ()
 
 oneDrive->singIn();
 
+</code>

@@ -39,6 +39,8 @@ private slots:
 
     void on_pushButton_upload2_clicked();
 
+    void on_pushButton_storageInfo_clicked();
+
 private:
     Ui::TestDialog *ui;
     QtOneDrive *oneDrive = nullptr;

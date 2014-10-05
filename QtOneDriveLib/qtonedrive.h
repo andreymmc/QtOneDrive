@@ -10,14 +10,13 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QSet>
-#include <QSettings>
-#include <QFile>
+
 
 class QtOneDriveAuthorizationDialog;
 class QSettings;
 class QNetworkAccessManager;
 class QNetworkReply;
-
+class QFile;
 
 class QTONEDRIVELIBSHARED_EXPORT QtOneDrive : public QObject
 {
@@ -38,6 +37,7 @@ class QTONEDRIVELIBSHARED_EXPORT QtOneDrive : public QObject
         DownloadFile,
 
         DeleteItem,
+        GetStorageInfo,
         CreateFolder
     };
 
@@ -65,8 +65,10 @@ public:
     void refreshToken();
     void traverseFolder(const QString& rootFolderID = "");
 
+    void getStorageInfo();
+
     void uploadFile(const QString& localFilePath, const QString& remoteFileName, const QString& folderID = "" );
-    void downloadFileRequest(const QString& localFilePath, const QString& fileID);
+    void downloadFile(const QString& localFilePath, const QString& fileID);
 
     void deleteItem(const QString& fileOrFolderID);
     void createFolder(const QString& folderName, const QString& parentFolderId = "");
@@ -88,6 +90,7 @@ signals:
     void errorTraverseFolder( const QString& error );
     void errorDeleteItem( const QString& error );
     void errorCreateFolder( const QString& error );
+    void errorGetStorageInfo( const QString& error );
     void error( const QString& error );
 
 
@@ -105,10 +108,12 @@ signals:
     void successRefreshToken();
     void successGetUserInfo(const QJsonObject &json);
     void successTraverseFolder(const QJsonObject &json, const QString& rootFolderID);
+    void successGetStorageInfo(const QJsonObject &json);
 
 private:
     QUrl urlSingIn() const;
     QUrl urlSignOut() const;
+    QUrl urlStorageInfo() const;
     QUrl urlGetToken() const;
     QUrl urlGetUserInfo() const;
     QUrl urlDeleteItem(const QString &id) const;
@@ -128,7 +133,7 @@ private:
     void emitError( const QString& desc );
     bool isNeedRefreshToken() const;
     void refreshTokenRequest();
-    void downloadFileRequest(const QUrl& url);
+    void downloadFile(const QUrl& url);
 
     QJsonObject checkReplyJson(QNetworkReply* reply);
 

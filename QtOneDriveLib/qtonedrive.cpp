@@ -8,10 +8,10 @@
 #include <QDesktopServices>
 #include <QJsonObject>
 #include <QJsonDocument>
-
+#include <QFile>
+#include <QSettings>
 
 #include "qtonedriveauthorizationdialog.h"
-
 
 
 #define INIT_AND_CHECK_BUSY(state) Q_ASSERT_X( !isBusy(), Q_FUNC_INFO, "QtOneDrive service is busy now" );\
@@ -159,6 +159,25 @@ void QtOneDrive::traverseFolder(const QString& folderID)
     });
 }
 
+void QtOneDrive::getStorageInfo()
+{
+    INIT_AND_CHECK_BUSY_AND_AUTH( GetStorageInfo );
+    TRY_REFRESH_TOKEN;
+
+    QNetworkRequest request( urlStorageInfo() );
+    QNetworkReply* reply  = networkManager_->get(request );
+
+    connect(reply, &QNetworkReply::finished,  [reply, this]()
+    {
+        QJsonObject json = checkReplyJson(reply);
+        if( !json.isEmpty() )
+        {
+            state_ = Empty;
+            emit successGetStorageInfo(json);
+        }
+    });
+}
+
 void QtOneDrive::uploadFile(const QString& localFilePath, const QString& remoteFileName,  const QString& folderID)
 {
     INIT_AND_CHECK_BUSY_AND_AUTH( UploadFile );
@@ -207,7 +226,7 @@ void QtOneDrive::uploadFile(const QString& localFilePath, const QString& remoteF
     });
 }
 
-void QtOneDrive::downloadFileRequest(const QString& localFilePath, const QString& fileId)
+void QtOneDrive::downloadFile(const QString& localFilePath, const QString& fileId)
 {
     INIT_AND_CHECK_BUSY_AND_AUTH( DownloadFile );
 
@@ -223,7 +242,7 @@ void QtOneDrive::downloadFileRequest(const QString& localFilePath, const QString
         QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
         if(!redirectUrl.isEmpty())
         {
-            downloadFileRequest(redirectUrl);
+            downloadFile(redirectUrl);
             return;
         }
 
@@ -293,7 +312,7 @@ void QtOneDrive::deleteItem(const QString &id)
     });
 }
 
-void QtOneDrive::downloadFileRequest(const QUrl &url)
+void QtOneDrive::downloadFile(const QUrl &url)
 {
     Q_ASSERT( state_ == DownloadFile );
 
@@ -384,6 +403,11 @@ void QtOneDrive::onRefreshTokenFinished()
         emit successRefreshToken();
         break;
 
+    case GetStorageInfo:
+        state_ = Empty;
+        emit getStorageInfo();
+        break;
+
     case TraverseFolder:
         state_ = Empty;
         traverseFolder(tmp_parentFolderId_);
@@ -396,7 +420,7 @@ void QtOneDrive::onRefreshTokenFinished()
 
     case DownloadFile:
         state_ = Empty;
-        downloadFileRequest(tmp_localFileName_, tmp_fileId_);
+        downloadFile(tmp_localFileName_, tmp_fileId_);
         break;
 
     case DeleteItem:
@@ -466,7 +490,6 @@ void QtOneDrive::getTokenRequest()
 
         }
     });
-
 }
 
 void QtOneDrive::closeAuthorizationForm()
@@ -515,6 +538,15 @@ QUrl QtOneDrive::urlSignOut() const
     QUrlQuery query;
     query.addQueryItem("client_id", clientID_);
     query.addQueryItem("redirect_uri", redirectURI_ );
+    url.setQuery( query );
+    return url;
+}
+
+QUrl QtOneDrive::urlStorageInfo() const
+{
+    QUrl url("https://apis.live.net/v5.0/me/skydrive/quota");
+    QUrlQuery query;
+    query.addQueryItem("access_token", accessToken_);
     url.setQuery( query );
     return url;
 }

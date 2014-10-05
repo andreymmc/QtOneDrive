@@ -54,6 +54,14 @@ TestDialog::TestDialog(QWidget *parent) :
         QMessageBox::information(this, "OneDrive", QString("successGetUserInfo\n")  + QJsonDocument(object).toJson() );
     });
 
+
+    connect( oneDrive, &QtOneDrive::successGetStorageInfo, [this] (const QJsonObject &object)
+    {
+        QMessageBox::information(this, "OneDrive", QString("successGetStorageInfo")  + QJsonDocument(object).toJson() );
+    });
+
+
+
     connect( oneDrive, &QtOneDrive::successUploadFile, [this] (const QString& filePath, const QString& fileID)
     {
         QTextEdit *text = new QTextEdit(0);
@@ -157,7 +165,7 @@ void TestDialog::on_pushButton_downloadFile_clicked()
     if( filePath.isEmpty() ) return;
 
 
-    oneDrive->downloadFileRequest(filePath, ui->lineEdit_fileID->text().trimmed());
+    oneDrive->downloadFile(filePath, ui->lineEdit_fileID->text().trimmed());
     ui->progressBar->setValue( 0 );
 }
 
@@ -179,4 +187,9 @@ void TestDialog::on_pushButton_upload2_clicked()
 
     oneDrive->uploadFile(filePath, QFileInfo(filePath).fileName(), ui->lineEdit_fileID->text().trimmed() );
     ui->progressBar->setValue( 0 );
+}
+
+void TestDialog::on_pushButton_storageInfo_clicked()
+{
+    oneDrive->getStorageInfo();
 }

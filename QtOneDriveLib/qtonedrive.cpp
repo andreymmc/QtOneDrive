@@ -50,7 +50,13 @@ QtOneDrive::QtOneDrive(const QString& clientID, const QString& secret, const QSt
 
 QtOneDrive::~QtOneDrive()
 {
+    if( tmp_file_ ) {
+        tmp_file_->close();
+        tmp_file_->deleteLater();
+        tmp_file_ = nullptr;
+    }
     exisitInstances_.remove( hash_ );
+
 }
 
 void QtOneDrive::signIn()
@@ -80,14 +86,6 @@ void QtOneDrive::signIn()
         if( state_ == SingIn && dialog_)
             emitError( "Authorization Cancelled" );
     });
-
-    /*
-    connect(dialog_, &QtOneDriveAuthorizationDialog::error, [this](const QUrl &url)
-    {
-        closeAuthorizationForm();
-        emitError( QString("Could not load page: %1").arg(url.toString()) );
-    });
-    */
 
     dialog_->show();
 }
@@ -200,7 +198,8 @@ void QtOneDrive::uploadFile(const QString& localFilePath, const QString& remoteF
     {
         if( tmp_file_ ) {
 
-            delete tmp_file_;
+            tmp_file_->close();
+            tmp_file_->deleteLater();
             tmp_file_ = nullptr;
 
             QJsonObject json = checkReplyJson(reply);
@@ -252,7 +251,6 @@ void QtOneDrive::downloadFile(const QString& localFilePath, const QString& fileI
             emitError("Unknown Error");
         }
     });
-
 }
 
 void QtOneDrive::createFolder(const QString &folderName, const QString &parentFolderId)
@@ -327,7 +325,8 @@ void QtOneDrive::downloadFile(const QUrl &url)
     connect(reply, &QNetworkReply::finished,  [reply, this]()
     {
         if( tmp_file_ ) {
-            delete tmp_file_;
+            tmp_file_->close();
+            tmp_file_->deleteLater();
             tmp_file_ = nullptr;
 
             qDebug() << "DOWNLOAD COMPLETE:" ;

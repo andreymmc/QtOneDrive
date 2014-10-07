@@ -68,6 +68,7 @@ public:
     void getStorageInfo();
 
     void uploadFile(const QString& localFilePath, const QString& remoteFileName, const QString& folderID = "" );
+    void uploadFile(QFile *file, const QString& remoteFileName, const QString& folderID = "" );
     void downloadFile(const QString& localFilePath, const QString& fileID);
 
     void deleteItem(const QString& fileOrFolderID);
@@ -81,34 +82,34 @@ public:
 
 
 signals:
-    void errorSignIn( const QString& error );
-    void errorSignOut( const QString& error );
-    void errorUploadFile( const QString& error );
-    void errorDownloadFile( const QString& error );
-    void errorGetUserInfo( const QString& error );
-    void errorRefreshToken( const QString& error );
-    void errorTraverseFolder( const QString& error );
-    void errorDeleteItem( const QString& error );
-    void errorCreateFolder( const QString& error );
-    void errorGetStorageInfo( const QString& error );
-    void error( const QString& error );
+    void errorSignIn( const QString error );
+    void errorSignOut( const QString error );
+    void errorUploadFile( const QString error );
+    void errorDownloadFile( const QString error );
+    void errorGetUserInfo( const QString error );
+    void errorRefreshToken( const QString error );
+    void errorTraverseFolder( const QString error );
+    void errorDeleteItem( const QString error );
+    void errorCreateFolder( const QString error );
+    void errorGetStorageInfo( const QString error );
+    void error( const QString error );
 
 
-    void progressUploadFile(const QString& localFilePath, int percent);
-    void progressDownloadFile(const QString& fileID, int percent );
+    void progressUploadFile(const QString localFilePath, int percent);
+    void progressDownloadFile(const QString fileID, int percent );
 
     void successSignIn();
     void successSingOut();
 
-    void successUploadFile(const QString& localFilePath, const QString& fileId);
-    void successDownloadFile(const QString& fileID);
-    void successDeleteItem(const QString& id);
-    void successCreateFolder(const QString& folderId);
+    void successUploadFile(const QString localFilePath, const QString fileId);
+    void successDownloadFile(const QString fileID);
+    void successDeleteItem(const QString id);
+    void successCreateFolder(const QString folderId);
 
     void successRefreshToken();
-    void successGetUserInfo(const QJsonObject &json);
-    void successTraverseFolder(const QJsonObject &json, const QString& rootFolderID);
-    void successGetStorageInfo(const QJsonObject &json);
+    void successGetUserInfo(const QJsonObject json);
+    void successTraverseFolder(const QJsonObject json, const QString rootFolderID);
+    void successGetStorageInfo(const QJsonObject json);
 
 private:
     QUrl urlSingIn() const;

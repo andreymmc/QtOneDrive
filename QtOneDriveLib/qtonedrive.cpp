@@ -67,6 +67,7 @@ void QtOneDrive::signIn()
 
     connect(dialog_, &QtOneDriveAuthorizationDialog::success, [this](const QUrl &url)
     {
+        qDebug() << url;
         QString code = QUrlQuery(url).queryItemValue("code");
         QString errorDesc = QUrlQuery(url).queryItemValue("error_description");
 
@@ -222,6 +223,42 @@ void QtOneDrive::uploadFile(const QString& localFilePath, const QString& remoteF
         qDebug() << "uploadProgress:" << bytesSent << bytesTotal;
         if( bytesTotal > 0 )
             emit progressUploadFile(localFilePath, (bytesSent*100)/bytesTotal);
+    });
+}
+
+void QtOneDrive::uploadFile(QFile *file, const QString &remoteFileName, const QString &folderID)
+{
+    INIT_AND_CHECK_BUSY_AND_AUTH( UploadFile );
+
+    tmp_parentFolderId_ = folderID;
+    tmp_localFileName_ = file->fileName();
+    tmp_remoteName_ = remoteFileName;
+
+    TRY_REFRESH_TOKEN
+
+    QNetworkRequest request( urlUploadFile(remoteFileName, folderID) );
+    QNetworkReply* reply = networkManager_->put(request, file);
+    connect(reply, &QNetworkReply::finished,  [reply, this]()
+    {
+            QJsonObject json = checkReplyJson(reply);
+
+            if( !json.isEmpty() )
+            {
+                QString id = json.value("id").toString();
+                if( !id.isEmpty() ) {
+                    state_ = Empty;
+                    emit successUploadFile(tmp_localFileName_, id);
+                }
+                else
+                    emitError( "Json Error 2" );
+            }
+    });
+
+    connect(reply, &QNetworkReply::uploadProgress, [reply, this](qint64 bytesSent, qint64 bytesTotal)
+    {
+        qDebug() << "uploadProgress:" << bytesSent << bytesTotal;
+        if( bytesTotal > 0 )
+            emit progressUploadFile(tmp_localFileName_, (bytesSent*100)/bytesTotal);
     });
 }
 

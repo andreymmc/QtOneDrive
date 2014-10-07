@@ -15,7 +15,7 @@ TestDialog::TestDialog(QWidget *parent) :
     ui->setupUi(this);
     oneDrive = new QtOneDrive("000000004012F592", "e7uiuaHcwcmuqyhaWKbqmQWN5o6enjgm", "My User Name", this );
 
-    connect( oneDrive, &QtOneDrive::error, [this] (const QString& error)
+    connect( oneDrive, &QtOneDrive::error, [this] (const QString error)
     {
         QMessageBox::critical(this, "OneDrive Error", error);
     });
@@ -35,12 +35,12 @@ TestDialog::TestDialog(QWidget *parent) :
         QMessageBox::information(this, "OneDrive", "successRefreshToken");
     });
 
-    connect( oneDrive, &QtOneDrive::successDeleteItem, [this] (const QString& id)
+    connect( oneDrive, &QtOneDrive::successDeleteItem, [this] (const QString id)
     {
         QMessageBox::information(this, "OneDrive", "successDeleteItem: " + id );
     });
 
-    connect( oneDrive, &QtOneDrive::successCreateFolder, [this] (const QString& id)
+    connect( oneDrive, &QtOneDrive::successCreateFolder, [this] (const QString id)
     {  
         QTextEdit *text = new QTextEdit(0);
         text->resize( QSize(500, 400) );
@@ -49,20 +49,20 @@ TestDialog::TestDialog(QWidget *parent) :
         text->show();
     });
 
-    connect( oneDrive, &QtOneDrive::successGetUserInfo, [this] (const QJsonObject &object)
+    connect( oneDrive, &QtOneDrive::successGetUserInfo, [this] (const QJsonObject object)
     {
         QMessageBox::information(this, "OneDrive", QString("successGetUserInfo\n")  + QJsonDocument(object).toJson() );
     });
 
 
-    connect( oneDrive, &QtOneDrive::successGetStorageInfo, [this] (const QJsonObject &object)
+    connect( oneDrive, &QtOneDrive::successGetStorageInfo, [this] (const QJsonObject object)
     {
         QMessageBox::information(this, "OneDrive", QString("successGetStorageInfo")  + QJsonDocument(object).toJson() );
     });
 
 
 
-    connect( oneDrive, &QtOneDrive::successUploadFile, [this] (const QString& filePath, const QString& fileID)
+    connect( oneDrive, &QtOneDrive::successUploadFile, [this] (const QString filePath, const QString fileID)
     {
         QTextEdit *text = new QTextEdit(0);
         text->resize( QSize(500, 400) );
@@ -71,22 +71,22 @@ TestDialog::TestDialog(QWidget *parent) :
         text->show();
     });
 
-    connect( oneDrive, &QtOneDrive::successDownloadFile, [this] (const QString& fileID)
+    connect( oneDrive, &QtOneDrive::successDownloadFile, [this] (const QString fileID)
     {
         QMessageBox::information(this, "OneDrive", QString("successDownloadFile: ")  + fileID );
     });
 
-    connect( oneDrive, &QtOneDrive::progressUploadFile, [this] (const QString& , int percent)
+    connect( oneDrive, &QtOneDrive::progressUploadFile, [this] (const QString , int percent)
     {
         ui->progressBar->setValue( percent );
     });
 
-    connect( oneDrive, &QtOneDrive::progressDownloadFile, [this] (const QString& , int percent)
+    connect( oneDrive, &QtOneDrive::progressDownloadFile, [this] (const QString , int percent)
     {
         ui->progressBar->setValue( percent );
     });
 
-    connect( oneDrive, &QtOneDrive::successTraverseFolder, [this] (const QJsonObject& array)
+    connect( oneDrive, &QtOneDrive::successTraverseFolder, [this] (const QJsonObject array)
     {
         QTextEdit *text = new QTextEdit(0);
         text->resize( QSize(500, 400) );

@@ -12,7 +12,7 @@ QtOneDrive* oneDrive = new QtOneDrive(YOUR_CLIENT_ID, YOUR_SECRET, ANY_ID, paren
 // or  QtOneDrive* oneDrive = new QtOneDrive(YOUR_CLIENT_ID, YOUR_SECRET, YOUR_REDIRECT_URI,  ANY_ID, parent );
 
 // Initialize slots
-connect( oneDrive, &QtOneDrive::error, [this] (const QString& error) {
+connect( oneDrive, &QtOneDrive::error, [this] (const QString error) {
     qDebug() << "ERROR: " << error;
 });
 connect( oneDrive, &QtOneDrive::successSignIn, [this] () {
@@ -28,13 +28,13 @@ QtOneDrive* oneDrive = new QtOneDrive(YOUR_CLIENT_ID, YOUR_SECRET, ANY_ID, paren
 
 
 // Initialize slots
-connect( oneDrive, &QtOneDrive::error, [this] (const QString& error) {
+connect( oneDrive, &QtOneDrive::error, [this] (const QString error) {
     qDebug() << "ERROR: " << error;
 });
-connect( oneDrive, &QtOneDrive::progressUploadFile, [this] (const QString& filePath, int percent) {
+connect( oneDrive, &QtOneDrive::progressUploadFile, [this] (const QString filePath, int percent) {
     qDebug() << QString("Progress %1 %%").arg(percent);
 });
-connect( oneDrive, &QtOneDrive::successSignIn, [this] (const QString& filePath, coust QString &fileId) {
+connect( oneDrive, &QtOneDrive::successSignIn, [this] (const QString filePath, coust QString fileId) {
     qDebug() << QString("Upload Success. File Path: %1   File Id: %2").arg(filePath, fileId);
 });
 
